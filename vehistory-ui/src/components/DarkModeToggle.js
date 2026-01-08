@@ -1,7 +1,7 @@
 function DarkModeToggle({ dark, toggle }) {
   return (
-    <button style={{ float: "right", marginBottom: "10px" }} onClick={toggle}>
-      {dark ? "Light" : "Dark"} Mode
+    <button className="icon-btn" onClick={toggle} title="Toggle Dark Mode">
+      {dark ? "☀️" : "🌙"}
     </button>
   );
 }

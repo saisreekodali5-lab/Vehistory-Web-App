@@ -2,11 +2,11 @@ import React from "react";
 import CarCard from "./CarCard";
 import { deleteCar } from "../services/api";
 
-function CarGrid({ cars, onSelect, refreshCars }) {
+function CarGrid({ cars, onSelect, refreshCars, loadCars }) {
   const handleDelete = async (carId) => {
     if (!window.confirm("Delete this car and all its events?")) return;
     await deleteCar(carId);
-    refreshCars(); // reload cars list
+    loadCars(); // reload cars list
   };
 
   return (

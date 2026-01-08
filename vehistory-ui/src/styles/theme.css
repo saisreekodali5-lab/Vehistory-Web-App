@@ -346,6 +346,49 @@ input:focus, select:focus, textarea:focus {
   font-size: 12px;
 }
 
+.notification-list {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  min-width: 250px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.dark .notification-list {
+  background: #2a2a2a;
+  border: 1px solid #555;
+  color: #f0f0f0;
+}
+
+.notification-item {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dark .notification-item {
+  border-bottom: 1px solid #444;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+}
+
+.dark .notification-item:hover {
+  background-color: #3a3a3a;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
 /* ---------------- Footer ---------------- */
 .footer {
   text-align: center;
@@ -446,4 +489,149 @@ input:checked + .slider::after {
 
 .delete-car-btn:hover {
   background: #d9363e;
+}
+.delete-car-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: #ff4d4f;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.delete-car-btn:hover {
+  background: #d9363e;
+}
+
+/* Header container: flex row, vertically centered */
+.header {
+  display: flex;
+  align-items: center;     /* vertically center items */
+  justify-content: space-between; /* space between left, center, right */
+  padding: 10px 20px;
+  gap: 20px;
+}
+
+/* Left: Logo */
+.header-left {
+  flex-shrink: 0;          /* don’t shrink */
+}
+
+.header-left img {
+  height: 60px;            /* control logo height */
+  width: auto;
+  object-fit: contain;
+}
+
+/* Center: Title and Tagline */
+.header-center {
+  flex: 1;                 /* take remaining space */
+  text-align: center;
+}
+
+.header-center h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.header-center p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Right: Notifications, Toggle, Login */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Align buttons / toggle vertically */
+.header-right button,
+.header-right .icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Header Center Title + Tagline */
+.header-center h1,
+.header-center p {
+  color: #0d6efd; /* Bootstrap primary blue */
+}
+/* App Name "Vehistory" */
+.header-center h1 {
+  color: #0d6efd;   /* Blue */
+  font-size: 32px;  /* larger font */
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Tagline under app name */
+.header-center p {
+  color: #000;      /* Black */
+  font-size: 16px;  /* slightly larger */
+  margin: 4px 0 0 0;
+}
+/* Left: Logo */
+.header-left img {
+  height: 80px;      /* increased from 60px to 80px */
+  width: auto;
+  object-fit: contain;
+}
+/* ---------------- Header ---------------- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  gap: 20px;
+}
+
+/* Left: Logo */
+.header-left img {
+  height: 90px;      /* larger logo */
+  width: auto;
+  object-fit: contain;
+}
+
+/* Center: Title & Tagline */
+.header-center {
+  flex: 1;
+  text-align: center;
+}
+
+.header-center h1 {
+  color: #0d6efd;   /* blue */
+  font-size: 34px;  /* slightly larger */
+  font-weight: bold;
+  margin: 0;
+}
+
+.header-center p {
+  color: #000;      /* black */
+  font-size: 17px;  /* slightly larger */
+  margin: 4px 0 0 0;
+}
+
+/* Right: Buttons / Toggle */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Bootstrap button enhancements */
+.header-right .btn {
+  border-radius: 8px;
+  padding: 8px 20px;
+  transition: all 0.3s ease;
+}
+
+.header-right .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }

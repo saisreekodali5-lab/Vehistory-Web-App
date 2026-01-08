@@ -1,13 +1,22 @@
+import "bootstrap/dist/css/bootstrap.min.css";
 import { useState, useEffect } from "react";
-import { getCars, addCar, getEvents, addEvent, getWarnings, deleteCar } from "./services/api";
+import {
+  getCars,
+  addCar,
+  getEvents,
+  addEvent,
+  deleteCar
+} from "./services/api";
+
+import Header from "./components/Header";
 import AddCar from "./components/AddCar";
 import AddEvent from "./components/AddEvent";
 import CarGrid from "./components/CarGrid";
 import EventTimeline from "./components/EventTimeline";
 import Dashboard from "./components/Dashboard";
-import DarkModeToggle from "./components/DarkModeToggle";
-import Logo from "./assets/logo.png";
+
 import Header3D from "./assets/Coverpage.jpg";
+
 import "./styles/theme.css";
 import "./styles/cards.css";
 
@@ -18,91 +27,74 @@ function App() {
   const [dark, setDark] = useState(false);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
-  const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
 
+  /* ---------------- LOAD CARS ---------------- */
   useEffect(() => {
     loadCars();
-    loadNotifications();
-    const interval = setInterval(loadNotifications, 30000);
-    return () => clearInterval(interval);
   }, []);
 
   const loadCars = async () => {
     const data = await getCars();
-    setCars(data);
+
+    const carsWithEvents = await Promise.all(
+      data.map(async (car) => {
+        try {
+          const events = await getEvents(car.id);
+          return { ...car, events };
+        } catch {
+          return { ...car, events: [] };
+        }
+      })
+    );
+
+    setCars(carsWithEvents);
   };
 
+  /* ---------------- LOAD EVENTS ---------------- */
   const loadEvents = async (car) => {
     setSelectedCar(car);
     const data = await getEvents(car.id);
     setEvents(data);
   };
 
-  const loadNotifications = async () => {
-    const data = await getWarnings();
-    setNotifications(data);
-  };
-
+  /* ---------------- DELETE CAR ---------------- */
   const handleDeleteCar = async (id) => {
     if (!window.confirm("Delete this car and all its events?")) return;
+
     await deleteCar(id);
-    setCars(cars.filter((c) => c.id !== id));
+
+    setCars((prev) => prev.filter((c) => c.id !== id));
+
     if (selectedCar?.id === id) {
       setSelectedCar(null);
       setEvents([]);
     }
   };
 
+  /* ---------------- FILTERS ---------------- */
   const filteredCars = cars.filter((c) =>
     `${c.brand} ${c.model}`.toLowerCase().includes(search.toLowerCase())
   );
 
   const filteredEvents =
-    filter === "All" ? events : events.filter((e) => e.type === filter);
+    filter === "All"
+      ? events
+      : events.filter((e) => e.type === filter);
 
+  /* ---------------- RENDER ---------------- */
   return (
     <div className={dark ? "dark" : ""}>
       <div className="container">
 
         {/* ================= HEADER ================= */}
-        <header className="top-header-image">
-          <div className="top-bar">
+        <Header dark={dark} toggleDark={() => setDark(!dark)} />
 
-            {/* LEFT */}
-            <img src={Logo} alt="Vehistory Logo" className="logo" />
-
-            {/* CENTER */}
-            <div className="header-title">
-              <h2>Welcome to Vehistory</h2>
-              <p>Track your cars, services, and events efficiently!</p>
-            </div>
-
-            {/* RIGHT */}
-            <div className="header-actions">
-              <button className="header-btn">Login</button>
-
-              <button
-                className="notification-btn"
-                onClick={() => setShowNotifications(!showNotifications)}
-              >
-                🔔
-                {notifications.length > 0 && (
-                  <span className="badge">{notifications.length}</span>
-                )}
-              </button>
-
-              <DarkModeToggle dark={dark} toggle={() => setDark(!dark)} />
-            </div>
-          </div>
-
-          {/* COVER IMAGE */}
-          <img
-            src={Header3D}
-            alt="Cover"
-            className="header-image-full"
-          />
-        </header>
+        {/* ================= COVER IMAGE ================= */}
+        <img
+          src={Header3D}
+          alt="Cover"
+          className="header-image-full"
+        />
 
         {/* ================= DASHBOARD ================= */}
         <section className="section-card">
@@ -138,6 +130,7 @@ function App() {
             cars={filteredCars}
             onSelect={loadEvents}
             onDelete={handleDeleteCar}
+            loadCars={loadCars}
           />
         </section>
 
@@ -148,18 +141,20 @@ function App() {
               Manage Events for {selectedCar.brand} {selectedCar.model}
             </h3>
 
+            {/* Add Event */}
             <AddEvent
               carId={selectedCar.id}
-              onEventAdded={async (ev) => {
-                await addEvent(ev);
-                loadEvents(selectedCar);
-                loadNotifications();
+              onEventAdded={(savedEvent) => {
+                // Immediately add the new event to state
+                setEvents((prevEvents) => [...prevEvents, savedEvent]);
               }}
             />
 
+            {/* Event Filter */}
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
+              className="mt-2 mb-3"
             >
               <option>All</option>
               <option>Service</option>
@@ -168,7 +163,10 @@ function App() {
               <option>Warning</option>
             </select>
 
-            <EventTimeline events={filteredEvents} setEvents={setEvents} />
+            <EventTimeline
+              events={filteredEvents}
+              setEvents={setEvents}
+            />
           </section>
         )}
 

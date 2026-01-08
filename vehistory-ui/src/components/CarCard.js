@@ -4,16 +4,19 @@ import Ford from "../assets/Ford.jpg";
 import Honda from "../assets/Honda.jpg";
 import mercedes from "../assets/mercedes.jpg";
 import Tesla from "../assets/Tesla.jpg";
-// Map brand to image
+import Volvo from "../assets/Volvo.jpg";
+// Map brand to image (case insensitive)
 const brandImages = {
-  Toyota: Toyota,
-  Ford: Ford,
-  Honda: Honda,
+  toyota: Toyota,
+  ford: Ford,
+  honda: Honda,
   mercedes: mercedes,
-  Tesla: Tesla};
+  tesla: Tesla,
+  volvo: Volvo,
+};
 
 function CarCard({ car, onSelect, onDelete }) {
-  const imageSrc = brandImages[car.brand] || "https://via.placeholder.com/400x200?text=Car";
+  const imageSrc = brandImages[car.brand?.toLowerCase()] || "https://via.placeholder.com/400x200?text=Car";
 
   return (
     <div className="car-card-wrapper">

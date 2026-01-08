@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { addEvent } from "../services/api"; // make sure this is correct
 
 function AddEvent({ carId, onEventAdded }) {
   const [type, setType] = useState("Service");
@@ -13,15 +14,28 @@ function AddEvent({ carId, onEventAdded }) {
       return;
     }
 
-    await onEventAdded({
+    // Prepare new event object
+    const newEvent = {
       type,
       description,
       date,
       carId
-    });
+    };
 
-    setDescription("");
-    setDate("");
+    try {
+      // Save event to backend
+      const savedEvent = await addEvent(newEvent);
+
+      // Update parent immediately
+      onEventAdded(savedEvent);
+
+      // Clear form
+      setDescription("");
+      setDate("");
+    } catch (error) {
+      console.error("Error adding event:", error);
+      alert("Failed to add event. Try again.");
+    }
   };
 
   return (
@@ -47,7 +61,7 @@ function AddEvent({ carId, onEventAdded }) {
         required
       />
 
-      <button type="submit">Add Event</button>
+      <button type="submit" className="btn btn-success mt-2">Add Event</button>
     </form>
   );
 }

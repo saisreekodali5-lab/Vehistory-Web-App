@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { getWarnings } from "../services/api"; // make sure this exists
+import { getWarnings } from "../services/api";
 
 function Notifications() {
   const [open, setOpen] = useState(false);
   const [warnings, setWarnings] = useState([]);
 
-  // Fetch warnings from backend
   const loadWarnings = async () => {
     try {
       const data = await getWarnings();
@@ -17,32 +16,43 @@ function Notifications() {
 
   useEffect(() => {
     loadWarnings();
-
-    // Optional: auto-refresh every 30 seconds
     const interval = setInterval(loadWarnings, 30000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="notifications-container">
-      <button className="notification-btn" onClick={() => setOpen(!open)}>
+    <div
+      className="notifications-container"
+      style={{ position: "relative", zIndex: 9999 }}
+    >
+      <button
+        className="notification-btn"
+        onClick={() => {
+          console.log("Bell clicked");
+          setOpen(!open);
+        }}
+      >
         🔔
-        {warnings.length > 0 && <span className="badge">{warnings.length}</span>}
+        {warnings.length > 0 && (
+          <span className="badge">{warnings.length}</span>
+        )}
       </button>
 
-      {open && warnings.length > 0 && (
+      {open && (
         <div className="notification-list">
-          {warnings.map(ev => (
+          {warnings.length === 0 && (
+            <div className="notification-item">No notifications</div>
+          )}
+
+          {warnings.map((ev) => (
             <div key={ev.id} className="notification-item">
-              ⚠️ Car {ev.carId}: {ev.description} ({new Date(ev.date).toLocaleString()})
+              ⚠️ <strong>Car {ev.carId}</strong>
+              <br />
+              {ev.description}
+              <br />
+              <small>{new Date(ev.date).toLocaleString()}</small>
             </div>
           ))}
-        </div>
-      )}
-
-      {open && warnings.length === 0 && (
-        <div className="notification-list">
-          <div className="notification-item">No notifications</div>
         </div>
       )}
     </div>
